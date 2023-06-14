@@ -4,6 +4,7 @@
         <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
    <application
         android:label="find_maps"
         android:name="${applicationName}"
@@ -11,7 +12,7 @@
         android:usesCleartextTraffic="true">
 
         <meta-data android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyD9aH9-SZKB-DskiZ2WcbxB-8ErWfGcUAs"/>
+            android:value="AIzaSyDECt6G853VOuXC-VrkeBB9lFotsSzSB4U"/>
         <activity
             android:name=".MainActivity"
             android:exported="true"

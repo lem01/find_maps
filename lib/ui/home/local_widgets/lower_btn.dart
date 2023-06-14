@@ -1,29 +1,41 @@
 import 'package:find_maps/helper/constant.dart';
 import 'package:find_maps/helper/media_query_data_extensions.dart';
 import 'package:find_maps/ui/home/home_provider.dart';
+import 'package:find_maps/ui/street/street.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 class LowerBtn extends StatelessWidget {
-  const LowerBtn({super.key});
+  final VoidCallback btn360;
+  final VoidCallback btnShowSingleLocation;
+
+  const LowerBtn({
+    super.key,
+    required this.btn360,
+    required this.btnShowSingleLocation,
+  });
 
   @override
   Widget build(BuildContext context) {
-    var homeProvider = context.read<HomeProvider>();
+    var homeProvider = context.watch<HomeProvider>();
 
     Widget leftBtn() {
-      var btnShowSingleLocation = Expanded(
+      var btnShowSingleLocationWidget = Expanded(
         child: CupertinoButton(
           child: SvgPicture.asset(imagePath + 'location.svg'),
-          onPressed: () {},
+          onPressed: () {
+            btnShowSingleLocation();
+          },
         ),
       );
       var btnshowImage = Expanded(
         child: CupertinoButton(
           child: SvgPicture.asset(imagePath + '360_icon.svg'),
-          onPressed: () {},
+          onPressed: () {
+            btn360();
+          },
         ),
       );
       return Container(
@@ -36,7 +48,7 @@ class LowerBtn extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            btnShowSingleLocation,
+            btnShowSingleLocationWidget,
             btnshowImage,
           ],
         ),

@@ -1,9 +1,11 @@
 import 'package:card_swiper/card_swiper.dart';
 import 'package:find_maps/helper/constant.dart';
+import 'package:find_maps/ui/home/home_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:find_maps/helper/media_query_data_extensions.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:find_maps/main.dart';
+import 'package:provider/provider.dart';
 
 class ListLocations extends StatelessWidget {
   final VoidCallback onPressedDirection;
@@ -15,7 +17,13 @@ class ListLocations extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    var homeProvider = context.watch<HomeProvider>();
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 400),
+      constraints: BoxConstraints(
+        maxHeight: size.hp(18),
+        minHeight: size.hp(12),
+      ),
       height: size.hp(12),
       width: double.infinity,
       child: Swiper(
@@ -36,7 +44,6 @@ class ListLocations extends StatelessWidget {
                     children: [
                       SizedBox(
                           height: size.dp(10),
-                          // width: size.dp(10),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(8),
                             child: Image.asset(
@@ -49,12 +56,14 @@ class ListLocations extends StatelessWidget {
                       ),
                       Expanded(
                         flex: 2,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        child: Wrap(
+                          // crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Padding(
                               padding: EdgeInsets.only(top: size.hp(1)),
-                              child: Text('Pizza Hot'),
+                              child: Text(homeProvider.placeMark.isNotEmpty
+                                  ? homeProvider.placeMark[4].name.toString()
+                                  : ''),
                             ),
                             Padding(
                               padding: EdgeInsets.only(top: size.hp(1)),
@@ -66,7 +75,16 @@ class ListLocations extends StatelessWidget {
                                     height: size.dp(1.5),
                                   ),
                                   SizedBox(width: size.wp(1)),
-                                  Text('10 mts')
+                                  Text(
+                                    homeProvider.distance.isNotEmpty
+                                        ? homeProvider.distance
+                                        : '',
+                                  ),
+                                  Text(
+                                    homeProvider.timeDuration.isNotEmpty
+                                        ? ' ' + homeProvider.timeDuration
+                                        : '',
+                                  )
                                 ],
                               ),
                             ),

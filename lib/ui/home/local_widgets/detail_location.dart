@@ -1,14 +1,17 @@
 import 'package:find_maps/helper/constant.dart';
+import 'package:find_maps/ui/home/home_provider.dart';
 import 'package:find_maps/ui/street/street.dart';
 import 'package:flutter/material.dart';
 import 'package:find_maps/helper/media_query_data_extensions.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 
 class DetailLocation extends StatelessWidget {
   const DetailLocation({super.key});
 
   @override
   Widget build(BuildContext context) {
+    var homeProvider = context.watch<HomeProvider>();
     return Container(
       height: size.hp(18),
       margin: EdgeInsets.symmetric(horizontal: size.wp(1.5)),
@@ -42,7 +45,9 @@ class DetailLocation extends StatelessWidget {
                       Padding(
                         padding: EdgeInsets.symmetric(vertical: size.hp(1)),
                         child: Text(
-                          'Pizza Hot',
+                          homeProvider.placeMark.isNotEmpty
+                              ? homeProvider.placeMark[4].name.toString()
+                              : '',
                           style: TextStyle(
                             color: primaryColor,
                             fontWeight: FontWeight.bold,
@@ -70,7 +75,16 @@ class DetailLocation extends StatelessWidget {
                               height: size.dp(1.5),
                             ),
                             SizedBox(width: size.wp(1)),
-                            Text('10 mts')
+                            Text(
+                              homeProvider.distance.isNotEmpty
+                                  ? homeProvider.distance
+                                  : '',
+                            ),
+                            Text(
+                              homeProvider.timeDuration.isNotEmpty
+                                  ? ' ' + homeProvider.timeDuration
+                                  : '',
+                            )
                           ],
                         ),
                       ),
