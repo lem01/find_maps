@@ -1,8 +1,15 @@
 import 'dart:math';
 
+import 'package:card_swiper/card_swiper.dart';
 import 'package:find_maps/helper/constant.dart';
 import 'package:find_maps/helper/media_query_data_extensions.dart';
 import 'package:find_maps/ui/home/home_provider.dart';
+import 'package:find_maps/ui/home/local_widgets/detail_location.dart';
+import 'package:find_maps/ui/home/local_widgets/list_location.dart';
+import 'package:find_maps/ui/home/local_widgets/lower_btn.dart';
+import 'package:find_maps/ui/home/local_widgets/search_bar.dart';
+import 'package:find_maps/ui/home/local_widgets/swicher.dart';
+import 'package:find_maps/ui/street/street.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,6 +18,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:find_maps/helper/media_query_data_extensions.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -20,21 +28,19 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  double latitude = 0;
-  double longitude = 0;
+  double latitude = 12.106509502683751;
+  double longitude = -86.26329875983458;
 
-  final TextEditingController _controllerSearchAddress =
-      TextEditingController();
-  // late GoogleMapController mapController;
+  // final TextEditingController _controllerSearchAddress =
+  //     TextEditingController();
+
   Set<Marker> _markers = <Marker>{};
-  LatLng? latlong;
+  late LatLng? latlong;
   late CameraPosition _cameraPosition;
   GoogleMapController? _controller;
   final TextEditingController _controllerLocation = TextEditingController();
   var address;
 
-  Color primaryColor = const Color(0xffB6E13D);
-  Color secoondaryColor = const Color(0xffFFFFFF);
   late BitmapDescriptor markerIcon;
 
   @override
@@ -46,6 +52,14 @@ class _HomeState extends State<Home> {
     super.initState();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    HomeProvider.controllerSearchAddress.dispose();
+    _controller!.dispose();
+    _controllerLocation.dispose();
+  }
+
   Future<void> setMarkerIcon() async {
     final byteData = await rootBundle.load('assets/arrow_map.png');
     final Uint8List bytes = byteData.buffer.asUint8List();
@@ -53,6 +67,7 @@ class _HomeState extends State<Home> {
   }
 
   Future getCurrentLocation() async {
+    latlong = LatLng(latitude, longitude);
     LocationPermission permission;
 
     permission = await Geolocator.checkPermission();
@@ -92,154 +107,47 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
+    var homeProvider = context.watch<HomeProvider>();
     MediaQueryData size = MediaQuery.of(context);
+
+    var googleMap = GoogleMap(
+      zoomControlsEnabled: false,
+      initialCameraPosition: _cameraPosition,
+      onMapCreated: (GoogleMapController controller) {
+        _controller = (controller);
+
+        _controller!
+            .animateCamera(CameraUpdate.newCameraPosition(_cameraPosition));
+      },
+      markers: myMarker(),
+      onTap: (latLng) {
+        if (mounted) {
+          setState(
+            () {
+              latlong = latLng;
+            },
+          );
+        }
+      },
+    );
+
     return Scaffold(
       body: SafeArea(
         top: false,
-        child: Container(
+        child: SizedBox(
           width: size.wp(100),
-          height: MediaQuery.of(context).size.height,
+          height: size.hp(100),
           child: Stack(
             children: [
-              (latlong != null)
-                  ? GoogleMap(
-                      zoomControlsEnabled: false,
-                      initialCameraPosition: _cameraPosition,
-                      onMapCreated: (GoogleMapController controller) {
-                        _controller = (controller);
-
-                        _controller!.animateCamera(
-                            CameraUpdate.newCameraPosition(_cameraPosition));
-                      },
-                      markers: myMarker(),
-                      onTap: (latLng) {
-                        if (mounted) {
-                          setState(
-                            () {
-                              latlong = latLng;
-                            },
-                          );
-                        }
-                      },
-                    )
-                  : Container(),
-              // Align(
-              //   alignment: Alignment.bottomRight,
-              //   child: Container(
-              //     padding: const EdgeInsets.all(10.0),
-              //     child: FloatingActionButton(
-              //       backgroundColor: secoondaryColor,
-              //       onPressed: () {
-              //         getCurrentLocation();
-              //       },
-              //       child: Icon(
-              //         Icons.my_location,
-              //         color: primaryColor,
-              //       ),
-              //     ),
-              //   ),
-              // ),
-
-              btnLeft(size),
-              btnRight(size),
-              _searchBar(),
+              (latlong != null) ? googleMap : Container(),
+              const CustomSwitcher(),
+              SearchBar(onPressed: () {
+                searchAddress(HomeProvider.controllerSearchAddress.text);
+              }, onSubmitted: (value) {
+                searchAddress(value);
+              }),
+              const LowerBtn(),
             ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Positioned btnRight(MediaQueryData size) {
-    return Positioned(
-              bottom: size.hp(5),
-              right: size.wp(5),
-              child: SizedBox(
-                height: size.hp(6),
-                width: size.wp(35),
-                child: CupertinoButton(
-                  
-                  padding: EdgeInsets.zero,
-                  color: primaryColor,
-                  child: SvgPicture.asset(
-                    imagePath + "arrow_map.svg",
-                    fit: BoxFit.contain ,
-                    height: size.hp(3),
-                  ),
-                  onPressed: () {},
-                ),
-              ),
-            );
-  }
-
-  Positioned btnLeft(MediaQueryData size) {
-    return Positioned(
-      bottom: size.hp(5),
-      left: size.wp(5),
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
-        ),
-        height: size.hp(6),
-        width: size.wp(35),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            Expanded(
-              child: CupertinoButton(
-                child: SvgPicture.asset(imagePath + 'location.svg'),
-                onPressed: () {},
-              ),
-            ),
-            Expanded(
-              child: CupertinoButton(
-                child: SvgPicture.asset(imagePath + '360_icon.svg'),
-                onPressed: () {},
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _searchBar() {
-    MediaQueryData size = MediaQuery.of(context);
-    return Positioned(
-      left: 0,
-      right: 0,
-      top: size.hp(8),
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: size.wp(6)),
-        child: TextField(
-          textInputAction: TextInputAction.search,
-          onSubmitted: (value) {
-            searchAddress(value);
-          },
-          controller: _controllerSearchAddress,
-          decoration: InputDecoration(
-            filled: true,
-            fillColor: Colors.white,
-            hintText: "Where are you going to?",
-            hintStyle: const TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.w400,
-            ),
-            prefixIcon: IconButton(
-              onPressed: () {
-                searchAddress(_controllerSearchAddress.text);
-              },
-              icon: const Icon(Icons.search, color: Colors.black),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: Colors.transparent, width: 0),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: Colors.transparent, width: 0),
-            ),
           ),
         ),
       ),
@@ -266,7 +174,7 @@ class _HomeState extends State<Home> {
 
     _markers = <Marker>{
       Marker(
-        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
         markerId: MarkerId(Random().nextInt(10000).toString()),
         position: LatLng(latlong!.latitude, latlong!.longitude),
       ),
