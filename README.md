@@ -1,16 +1,37 @@
-# find_maps
 
-A new Flutter project.
+# Bienvenido al repositorio Find Maps app 📱
 
-## Getting Started
+Demostracion de localizacón en tiempo real.
 
-This project is a starting point for a Flutter application.
 
-A few resources to get you started if this is your first Flutter project:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+------------
+
+
+### Pasos para correr el proyecto
+
+- Posicionar en rama main.
+- Ejecutar el proyecto con un emulador android api 31 (que contenga Play Store preferible).
+
+------------
+
+### Descripcion general del proyecto 
+*Nota 1: Este proyecto  está configurado para usarse en Windows*
+
+*Nota 2:  Puedes correr la aplicacion en tu celular fisico o emuladores Android*
+
+- Lenguajes
+	- Dart
+- Editores
+	 - Android Studio
+     - Visual Studio Code
+- Emuladores utilizados
+	- Emulador de Android Studio (API 31 con Play Store)
+
+------------
+## Capturas de pantalla
+
+|  ![Android ScreenShots](screenshots/zgif.com-gif-maker(1).gif)   | ![Android ScreenShots](screenshots/zgif.com-gif-maker(2).gif) |   ![Android ScreenShots](screenshots/zgif.com-gif-maker(3).gif)| 
+|               ------------                                     | ------------ 		 				  |       ------------      |
+|  ![Android ScreenShots](screenshots/zgif.com-gif-maker(4).gif) 
