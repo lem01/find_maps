@@ -22,7 +22,9 @@ Demostracion de localizacón en tiempo real.
 *Nota 2:  Puedes correr la aplicacion en tu celular fisico o emuladores Android*
 
 - Lenguajes
-	- Dart
+	- Dart 2.19.6
+ - Frameworks
+   	- Flutter version 3.7.12
 - Editores
 	 - Android Studio
      - Visual Studio Code
